@@ -1,6 +1,8 @@
 # chatti
 A bot built in Node.js on Microsoft Bot Framework.
 
+[![Add to Skype](https://dev.botframework.com/Client/Images/Add-To-Skype-Buttons.png)](https://join.skype.com/bot/b0ad7bc7-b0f8-45b2-9000-77534042f1c6)
+
 
 ## How to run the bot
 
