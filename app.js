@@ -17,6 +17,10 @@ var bot = new builder.UniversalBot(connector);
 
 app.post('/api/messages', connector.listen());
 
+app.get('/',function(req,res){
+    res.sendFile(__dirname + '/index.html');
+});
+
 var listner = app.listen(process.env.port || process.env.PORT || 3000, function () {
    console.log('%s listening to %s', app.name, listner.address().port); 
 });
