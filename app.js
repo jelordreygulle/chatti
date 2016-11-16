@@ -34,10 +34,15 @@ String.prototype.contains = function(content){
 }
 
 bot.dialog('/', function (session) {
+    console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
     if(session.message.text.toLowerCase().contains('hello')){
-			session.send(`Hey, How are you?`);
+			session.send('Hey, '+ session.message.user.name +' How are you?);
       }else if(session.message.text.toLowerCase().contains('help')){
 			session.send('How can I help you?');
+      }else if(session.message.text.toLowerCase().contains('good morning')){
+			session.send('Good morning');
+      }else if(session.message.text.toLowerCase().contains('thank')){
+			session.send('You are welcome');
       }else{
 			session.send('Sorry I don\'t understand you...');
       }
