@@ -35,7 +35,7 @@ String.prototype.contains = function(content){
 
 bot.dialog('/', function (session) {
     console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
-    if(session.message.text.toLowerCase().contains('hello')){
+    if(session.message.text.toLowerCase().contains('hello') || session.message.text.toLowerCase().contains('hi')){
 			session.send('Hey, '+ session.message.user.name +' How are you?');
       }else if(session.message.text.toLowerCase().contains('help')){
 			session.send('How can I help you?');
