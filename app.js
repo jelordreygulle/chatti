@@ -49,15 +49,5 @@ bot.dialog('/', function (session) {
 });
 
 bot.dialog('HelpDialog', function (session) {
-    var card = new builder.HeroCard(session)
-        .title('help_title')
-        .buttons([
-            builder.CardAction.imBack(session, 'roll dice', 'Help Text'),
-            builder.CardAction.imBack(session, 'play', 'Play Text')
-        ]);
-    var msg = new builder.Message(session)
-        .speak(speak(session, 'help_ssml'))
-        .addAttachment(card)
-        .inputHint(builder.InputHint.acceptingInput);
-    session.send(msg).endDialog();
+       session.send('How can I help you?').endDialog();
 }).triggerAction({ matches: [/help/i, /support/i, /problem/i] });
