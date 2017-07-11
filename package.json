@@ -4,11 +4,19 @@
   "description": "A simple chat bot created using ms botframework",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "keywords": [
     "botframework"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaminduN/chatti.git"
+},
+"bugs": {
+    "url": "https://github.com/kaminduN/chatti/issues"
+},
   "author": "kamindu",
   "license": "ISC",
   "dependencies": {
