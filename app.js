@@ -34,25 +34,45 @@ String.prototype.contains = function(content){
 }
 
 bot.dialog('/', function (session) {
-    console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
-    if(session.message.text.toLowerCase().contains('hello') || session.message.text.toLowerCase().contains('hi')){
-			          // console.log('user '+ session.userData.name)
-        if (session.userData.name === undefined){
+     if (session.userData.name === undefined){
           session.userData.name = session.message.user.name
         }
-
+    console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
+    if(session.message.text.toLowerCase().contains('hello') || session.message.text.toLowerCase().contains('hi')){
         session.send('Hey, '+ session.userData.name +' How are you?');
 
-      }else if((m = /^\good (morning|evening)/i.exec(session.message.text)) !== null){
-        greets = Array('Good day to you too', 'Wish you the same', 'hmm');
+      }else if((m = /^\good (morning|evening|night)/i.exec(session.message.text)) !== null){
+        greets = Array('Good day to you too',
+		       'Wish you the same', 
+		       'hmm',
+		       'Good '+ m[1]);
         session.send(greets[Math.floor(Math.random()*greets.length)]);
       }else if(/^change name/i.test(session.message.text)){
           session.beginDialog('/changeName');
-       
+	      
+      } else if ((m = /^\I (love|like) (.*)/i.exec(session.message.text)) !== null) {
+        replies = Array('I '+ m[1] +' you too', 
+                        '(blush)', 
+                        'Thanks I '+ m[1] +' you a lot too',
+                        'I '+ m[1]+' to make new friends.',
+                        'i ' + m[1]  + ' you too '+ session.userData.name);
+        session.send(replies[Math.floor(Math.random() * replies.length)]);
+
+      } else if ((m = /^\who (is|are) (you|chatti)/i.exec(session.message.text)) !== null) {
+        replies = Array('I am chatti the bot',
+		       'I\'m chatti');
+        session.send(replies[Math.floor(Math.random() * replies.length)]);
+	      
       }else if(session.message.text.toLowerCase().contains('thank')){
 			  session.send('You are welcome');
       }else{
-			  session.send('Sorry I don\'t understand you...');
+	      replies = Array('Sorry I don\'t understand you...',
+		       'what do you mean ?',
+		        'Sorry, I do not understand that yet..',
+			 'I do not understand that yet..',
+ 			'Can you ask something else ?'			      
+			':|');
+        session.send(replies[Math.floor(Math.random() * replies.length)]);
       }
 });
 
