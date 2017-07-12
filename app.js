@@ -70,7 +70,7 @@ bot.dialog('/', function (session) {
 		       'what do you mean ?',
 		        'Sorry, I do not understand that yet..',
 			 'I do not understand that yet..',
- 			'Can you ask something else ?'			      
+ 			'Can you ask something else ?',		      
 			':|');
         session.send(replies[Math.floor(Math.random() * replies.length)]);
       }
