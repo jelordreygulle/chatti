@@ -34,9 +34,11 @@ String.prototype.contains = function(content){
 }
 
 bot.dialog('/', function (session) {
+     //setting default values
      if (session.userData.name === undefined){
           session.userData.name = session.message.user.name
-        }
+     }
+
     console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
     if(session.message.text.toLowerCase().contains('hello') || session.message.text.toLowerCase().contains('hi')){
         session.send('Hey, '+ session.userData.name +' How are you?');
@@ -47,9 +49,19 @@ bot.dialog('/', function (session) {
 		       'hmm',
 		       'Good '+ m[1]);
         session.send(greets[Math.floor(Math.random()*greets.length)]);
-      }else if(/^change name/i.test(session.message.text)){
-          session.beginDialog('/changeName');
-	      
+
+      }else if ((m = /^\change (?:my)?[ ]?(name|search)/i.exec(session.message.text)) !== null){
+    //   (/^change (?:my)?[ ]?(name|search)/i.test(session.message.text)){
+        console.log(m[1]);
+          if (m[1] == 'name'){
+                session.beginDialog('/changeName');
+          }else if (m[1] == 'search'){
+              console.log("change search,,,,,,");
+                session.beginDialog('/changeSearch');
+          }else{
+                session.send('Sorry, I do not understand that yet..');
+          }
+
       } else if ((m = /^\I (love|like) (.*)/i.exec(session.message.text)) !== null) {
         replies = Array('I '+ m[1] +' you too', 
                         '(blush)', 
@@ -96,15 +108,76 @@ bot.dialog('/changeName', [
     }
 ]);
 
+bot.dialog('/changeSearch', [
+    function (session, next) {
+        session.dialogData.NewSearch = " ";
+        builder.Prompts.choice(session, "What do you want me to use to search results?", ["Bing", "Google", "DuckDuckGo"]);
+    },
+    function (session, results) {
+        session.dialogData.NewSearch = results.response;
+        builder.Prompts.choice(session, "Are you sure you want me use " + session.dialogData.NewSearch + "?", ["Yes", "No"]);
+    },
+    function (session, results) {
+        if (results.response.entity == "Yes") {
+            session.userData.search = session.dialogData.NewSearch;
+            session.endDialog("Alright from now on in using " + session.userData.search + "!!!");
+        }
+        else {
+            session.endDialog("Phew! I am not that good at remembering options.");
+        }
+    }
+]);
+
 // search dialog
 bot.dialog('search', function (session, args, next) {
     // perform search
+    if (session.userData.search === undefined){
+          session.userData.search = 'DuckDuckGo'
+     }
     // console.log(args.intent.matched[1].trim());
     var messageText = args.intent.matched[1].trim();
     // session.send('%s, wait a few seconds. Searching for \'%s\' ...', session.message.user.name, messageText);
-    session.send('https://www.bing.com/search?q=%s', encodeURIComponent(messageText));
-    session.endDialog();
-}).triggerAction({ matches: /^search (.*)/i });//regex pattern matching
+    if (session.userData.search === 'DuckDuckGo'){
+        
+        request = require('request'); 
+        var url = "https://api.duckduckgo.com/?q="+encodeURIComponent(messageText)+"&format=json&pretty=1";
+
+        request(url, function(err, response, body){
+                if (err) console.log(err);
+                if (response.statusCode == 200) {
+                    body = JSON.parse(body)
+                        session.sendTyping();
+                        console.log(body);
+                        if (body.AbstractText !== ""){
+                            session.send(body.AbstractText);    
+                        }else if (body.RelatedTopics[0].Text !== ""){
+                            session.send(body.RelatedTopics[0].Text);
+                        }else{
+                            session.send('https://duckduckgo.com/?q=%s', encodeURIComponent(messageText));
+                        }
+
+                } else if (response.statusCode == 500) {
+                    session.send("error: server error");
+                    
+                } else {
+                    session.send("error: problem with request code: "+response.statusCode)
+                    
+                }
+        });
+        session.send('searching '+ messageText);
+
+    }else if (session.userData.search === 'Google'){
+        session.send('https://www.google.com/search?q=%s', encodeURIComponent(messageText));
+
+    }else if (session.userData.search === 'Bing'){
+            session.send('https://www.bing.com/search?q=%s', encodeURIComponent(messageText));
+            // session.endDialog();
+    }else{
+        session.send('I dont know from where should i search '+ messageText);
+    }
+   session.endDialog();
+    
+}).triggerAction({ matches: /^(?:(?:what (?:is|is a|are))|search) (.*)/i });//regex pattern matching
 
 bot.dialog('HelpDialog', require('./support'))
     .triggerAction({ 
