@@ -50,14 +50,14 @@ bot.dialog('/', function (session) {
 		       'Good '+ m[1]);
         session.send(greets[Math.floor(Math.random()*greets.length)]);
 
-      }else if ((m = /^\change (?:my)?[ ]?(name|search)/i.exec(session.message.text)) !== null){
-    //   (/^change (?:my)?[ ]?(name|search)/i.test(session.message.text)){
-        console.log(m[1]);
+      }else if ((m = /^change (?:my)?[ ]?(name|search)/i.exec(session.message.text)) !== null){
+        session.send('changeing name.....' + session.message.text + "...");
+       
           if (m[1] == 'name'){
-                session.beginDialog('/changeName');
+                session.beginDialog('changeName');
           }else if (m[1] == 'search'){
-              console.log("change search,,,,,,");
-                session.beginDialog('/changeSearch');
+              session.send("change search,,,,,,");
+                session.beginDialog('changeSearch');
           }else{
                 session.send('Sorry, I do not understand that yet..');
           }
@@ -72,9 +72,16 @@ bot.dialog('/', function (session) {
 
       } else if ((m = /^\who (is|are) (you|chatti)/i.exec(session.message.text)) !== null) {
         replies = Array('I am chatti the bot',
-		       'I\'m chatti');
+		                'I\'m chatti');
         session.send(replies[Math.floor(Math.random() * replies.length)]);
-	      
+	  } else if ((m = /^\how are (you|chatti)/i.exec(session.message.text)) !== null) {
+        replies = Array('I am doing good, how are you ?',
+                        'I\'m doing good',
+		                'So far so good');
+        session.send(replies[Math.floor(Math.random() * replies.length)]);
+	
+      }else if(session.message.text.toLowerCase().contains('status')){
+			  session.send('My status telling....');
       }else if(session.message.text.toLowerCase().contains('thank')){
 			  session.send('You are welcome');
       }else{
@@ -88,7 +95,7 @@ bot.dialog('/', function (session) {
       }
 });
 
-bot.dialog('/changeName', [
+bot.dialog('changeName', [
     function (session, next) {
         session.dialogData.NewName = " ";
         builder.Prompts.text(session, "Well that's new. What do you want me to call you?");
@@ -108,13 +115,13 @@ bot.dialog('/changeName', [
     }
 ]);
 
-bot.dialog('/changeSearch', [
+bot.dialog('changeSearch', [
     function (session, next) {
         session.dialogData.NewSearch = " ";
         builder.Prompts.choice(session, "What do you want me to use to search results?", ["Bing", "Google", "DuckDuckGo"]);
     },
     function (session, results) {
-        session.dialogData.NewSearch = results.response;
+        session.dialogData.NewSearch = results.response.entity;
         builder.Prompts.choice(session, "Are you sure you want me use " + session.dialogData.NewSearch + "?", ["Yes", "No"]);
     },
     function (session, results) {
