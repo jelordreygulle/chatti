@@ -40,7 +40,7 @@ bot.dialog('/', function (session) {
      }
 
     console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
-    if(session.message.text.toLowerCase().contains('hello') || session.message.text.toLowerCase().contains('hi')){
+      if(/^(hello|^hi|greetings)/i.test(session.message.text)){
         session.send('Hey, '+ session.userData.name +' How are you?');
 
       }else if((m = /^\good (morning|evening|night)/i.exec(session.message.text)) !== null){
@@ -51,46 +51,57 @@ bot.dialog('/', function (session) {
         session.send(greets[Math.floor(Math.random()*greets.length)]);
 
       }else if ((m = /^change (?:my)?[ ]?(name|search)/i.exec(session.message.text)) !== null){
-        session.send('changeing name.....' + session.message.text + "...");
        
           if (m[1] == 'name'){
                 session.beginDialog('changeName');
           }else if (m[1] == 'search'){
-              session.send("change search,,,,,,");
                 session.beginDialog('changeSearch');
           }else{
                 session.send('Sorry, I do not understand that yet..');
           }
 
       } else if ((m = /^\I (love|like) (.*)/i.exec(session.message.text)) !== null) {
-        replies = Array('I '+ m[1] +' you too', 
-                        '(blush)', 
-                        'Thanks I '+ m[1] +' you a lot too',
-                        'I '+ m[1]+' to make new friends.',
-                        'i ' + m[1]  + ' you too '+ session.userData.name);
-        session.send(replies[Math.floor(Math.random() * replies.length)]);
+		replies = Array('I '+ m[1] +' you too', 
+				'(blush)', 
+				'Thanks I '+ m[1] +' you a lot too',
+				'I '+ m[1]+' to make new friends.',
+				'i ' + m[1]  + ' you too '+ session.userData.name);
+		session.send(replies[Math.floor(Math.random() * replies.length)]);
 
       } else if ((m = /^\who (is|are) (you|chatti)/i.exec(session.message.text)) !== null) {
-        replies = Array('I am chatti the bot',
-		                'I\'m chatti');
-        session.send(replies[Math.floor(Math.random() * replies.length)]);
-	  } else if ((m = /^\how are (you|chatti)/i.exec(session.message.text)) !== null) {
-        replies = Array('I am doing good, how are you ?',
-                        'I\'m doing good',
+
+	      replies = Array('I am chatti the bot',
+		              'I\'m chatti');
+              session.send(replies[Math.floor(Math.random() * replies.length)]);
+
+      } else if ((m = /^\how are (you|chatti)/i.exec(session.message.text)) !== null) {
+		replies = Array('I am doing good, how are you ?',
+				'I\'m doing good',
 		                'So far so good');
-        session.send(replies[Math.floor(Math.random() * replies.length)]);
-	
+        	session.send(replies[Math.floor(Math.random() * replies.length)]);
+
+      } else if ((m = /^(?:Tell|say) (?:something)?[ ]?(interesting|fact)/i.exec(session.message.text)) !== null) {
+            request = require('request');
+            session.sendTyping();
+            request(`http://numbersapi.com/random/trivia`, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    session.send(body);
+                }
+            });
+	  
       }else if(session.message.text.toLowerCase().contains('status')){
-			  session.send('My status telling....');
+              session.send('My status telling....');
+	      session.send("Your name is " + session.userData.name);
+
       }else if(session.message.text.toLowerCase().contains('thank')){
 			  session.send('You are welcome');
       }else{
 	      replies = Array('Sorry I don\'t understand you...',
-		       'what do you mean ?',
-		        'Sorry, I do not understand that yet..',
-			 'I do not understand that yet..',
- 			'Can you ask something else ?',		      
-			':|');
+			       'what do you mean ?',
+			       'Sorry, I do not understand that yet..',
+			       'I do not understand that yet..',
+			       'Can you ask something else ?',		      
+			       ':|');
         session.send(replies[Math.floor(Math.random() * replies.length)]);
       }
 });
@@ -140,10 +151,10 @@ bot.dialog('search', function (session, args, next) {
     // perform search
     if (session.userData.search === undefined){
           session.userData.search = 'DuckDuckGo'
-     }
-    // console.log(args.intent.matched[1].trim());
+    }
+    
     var messageText = args.intent.matched[1].trim();
-    // session.send('%s, wait a few seconds. Searching for \'%s\' ...', session.message.user.name, messageText);
+    
     if (session.userData.search === 'DuckDuckGo'){
         
         request = require('request'); 
