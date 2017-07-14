@@ -156,8 +156,10 @@ bot.dialog('search', function (session, args, next) {
                         session.sendTyping();
                         console.log(body);
                         if (body.AbstractText !== ""){
-                            session.send(body.AbstractText);    
+                            session.send(body.AbstractText);
+                            session.send(body.Image); 
                         }else if (body.RelatedTopics[0].Text !== ""){
+                            session.send(body.RelatedTopics[0].Icon.URL);
                             session.send(body.RelatedTopics[0].Text);
                         }else{
                             session.send('https://duckduckgo.com/?q=%s', encodeURIComponent(messageText));
