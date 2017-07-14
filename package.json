@@ -13,15 +13,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/kaminduN/chatti.git"
-},
-"bugs": {
+  },
+  "bugs": {
     "url": "https://github.com/kaminduN/chatti/issues"
-},
+  },
   "author": "kamindu",
   "license": "ISC",
   "dependencies": {
     "botbuilder": "^3.8.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "request": "^2.81.0"
   },
-  "engines":{"node":"6.9.x"}
+  "engines": {
+    "node": "6.9.x"
+  }
 }
