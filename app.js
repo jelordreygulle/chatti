@@ -22,9 +22,28 @@ app.get('/',function(req,res){
 });
 
 var listner = app.listen(process.env.port || process.env.PORT || 3000, function () {
-   console.log('%s listening to %s', app.name, listner.address().port); 
+   console.log('%s listening to %s', app.name, listner.address().port);
+   log.info('%s listening to %s', app.name, listner.address().port);
 });
 
+/**
+ * make a log directory, just in case it isn't there.
+ */
+try {
+  require('fs').mkdirSync('./log');
+} catch (e) {
+  if (e.code != 'EEXIST') {
+    console.error("Could not set up log directory, error was: ", e);
+    process.exit(1);
+  }
+}
+
+/**
+ * Initialise log4js first, so we don't miss any log messages
+ */
+var log4js = require('log4js');
+log4js.configure('./config/log4js.json');
+var log = log4js.getLogger("bot");
 
 //=========================================================
 // Bots Dialogs
@@ -38,10 +57,16 @@ bot.dialog('/', function (session) {
      if (session.userData.name === undefined){
           session.userData.name = session.message.user.name
      }
-
+     const Spinner = require('node-spintax');
     console.log(session.message.user.name + ' -> ' +session.message.text.toLowerCase());
       if(/^(hello|^hi|greetings)/i.test(session.message.text)){
-        session.send('Hey, '+ session.userData.name +' How are you?');
+          
+          var spinner = new Spinner('{Hi|Hello|Hi there|Hiya} '+ session.userData.name +' {How|how} {are you|ru} doing today {?|??|???}');
+          session.send(spinner.unspinRandom(1));
+
+      }else if((m = /^(I'\m|I am|im) (?:doing)?[ ]?(good|ok|well|alright|fine|great)/i.exec(session.message.text)) !== null){
+        var spinner = new Spinner('{Awesome|cool|'+m[1]+' also doing '+ m[2]+'}');
+        session.send(spinner.unspinRandom(1));
 
       }else if((m = /^\good (morning|evening|night)/i.exec(session.message.text)) !== null){
         greets = Array('Good day to you too',
@@ -71,7 +96,7 @@ bot.dialog('/', function (session) {
       } else if ((m = /^\who (is|are) (you|chatti)/i.exec(session.message.text)) !== null) {
 
 	      replies = Array('I am chatti the bot',
-		              'I\'m chatti');
+		                  'I\'m chatti');
               session.send(replies[Math.floor(Math.random() * replies.length)]);
 
       } else if ((m = /^\how are (you|chatti)/i.exec(session.message.text)) !== null) {
@@ -96,6 +121,7 @@ bot.dialog('/', function (session) {
       }else if(session.message.text.toLowerCase().contains('thank')){
 			  session.send('You are welcome');
       }else{
+          log.info(" -> " + session.message.text);
 	      replies = Array('Sorry I don\'t understand you...',
 			       'what do you mean ?',
 			       'Sorry, I do not understand that yet..',
