@@ -195,7 +195,7 @@ bot.dialog('search', function (session, args, next) {
                         if (body.AbstractText !== ""){
                             session.send(body.AbstractText);
                             session.send(body.Image); 
-                        }else if (body.RelatedTopics[0].Text !== ""){
+                        }else if (body.RelatedTopics[0] !== undefined){
                             session.send(body.RelatedTopics[0].Icon.URL);
                             session.send(body.RelatedTopics[0].Text);
                         }else{
