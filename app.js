@@ -180,7 +180,7 @@ bot.dialog('search', require('./dialogs/search'))
         matches: /^(?:(?:what (?:is|is a|are))|search) (.*)/i }
 );//regex pattern matching
 
-bot.dialog('HelpDialog', require('./support'))
+bot.dialog('HelpDialog', require('./dialogs/support'))
     .triggerAction({ 
       matches: [/help/i, /support/i, /problem/i] 
 });
