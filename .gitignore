@@ -1,5 +1,8 @@
 # Dependency directories
 node_modules
 
+# project runtime directories
+log
+
 # IDE related
 .project

@@ -1,6 +1,8 @@
 var builder = require('botbuilder');
 var express = require('express');
 
+// Load the core build.
+var _ = require('lodash');
 
 // Bot Setup
 
@@ -73,7 +75,7 @@ bot.dialog('/', function (session) {
 		       'Wish you the same', 
 		       'hmm',
 		       'Good '+ m[1]);
-        session.send(greets[Math.floor(Math.random()*greets.length)]);
+        session.send(_.sample(greets));
 
       }else if ((m = /^change (?:my)?[ ]?(name|search)/i.exec(session.message.text)) !== null){
        
@@ -91,19 +93,19 @@ bot.dialog('/', function (session) {
 				'Thanks I '+ m[1] +' you a lot too',
 				'I '+ m[1]+' to make new friends.',
 				'i ' + m[1]  + ' you too '+ session.userData.name);
-		session.send(replies[Math.floor(Math.random() * replies.length)]);
+        session.send(_.sample(replies));
 
       } else if ((m = /^\who (is|are) (you|chatti)/i.exec(session.message.text)) !== null) {
 
 	      replies = Array('I am chatti the bot',
 		                  'I\'m chatti');
-              session.send(replies[Math.floor(Math.random() * replies.length)]);
+              session.send(_.sample(replies));
 
       } else if ((m = /^\how are (you|chatti)/i.exec(session.message.text)) !== null) {
 		replies = Array('I am doing good, how are you ?',
 				'I\'m doing good',
 		                'So far so good');
-        	session.send(replies[Math.floor(Math.random() * replies.length)]);
+            session.send(_.sample(replies));
 
       } else if ((m = /^(?:Tell|say) (?:something)?[ ]?(interesting|fact)/i.exec(session.message.text)) !== null) {
             request = require('request');
@@ -113,7 +115,7 @@ bot.dialog('/', function (session) {
                     session.send(body);
                 }
             });
-	  
+
       }else if(session.message.text.toLowerCase().contains('status')){
               session.send('My status telling....');
 	      session.send("Your name is " + session.userData.name);
@@ -128,7 +130,7 @@ bot.dialog('/', function (session) {
 			       'I do not understand that yet..',
 			       'Can you ask something else ?',		      
 			       ':|');
-        session.send(replies[Math.floor(Math.random() * replies.length)]);
+        session.send(_.sample(replies));
       }
 });
 
@@ -192,10 +194,10 @@ bot.dialog('search', function (session, args, next) {
                     body = JSON.parse(body)
                         session.sendTyping();
                         console.log(body);
-                        if (body.AbstractText !== ""){
+                        if ( ! _.isEmpty(body.AbstractText)){
                             session.send(body.AbstractText);
                             session.send(body.Image); 
-                        }else if (body.RelatedTopics[0] !== undefined){
+                        }else if (! _.isEmpty(body.RelatedTopics[0])){
                             session.send(body.RelatedTopics[0].Icon.URL);
                             session.send(body.RelatedTopics[0].Text);
                         }else{
@@ -204,10 +206,10 @@ bot.dialog('search', function (session, args, next) {
 
                 } else if (response.statusCode == 500) {
                     session.send("error: server error");
-                    
+
                 } else {
                     session.send("error: problem with request code: "+response.statusCode)
-                    
+
                 }
         });
         session.send('searching '+ messageText);
